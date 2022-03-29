@@ -1,8 +1,13 @@
 {% extends "bootstrap/base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
+{% block title %}
+    Register
+{% endblock %}
+
 {% block body %}
-    <div class="container">
+    <div class="box">
+
             {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
 
     </div>
