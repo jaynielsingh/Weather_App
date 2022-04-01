@@ -71,12 +71,12 @@ def location():
             "lat": latitude,
             "lon": longitude,
             "appid": WEATHER_API_KEY,
+            "units": 'imperial',
         }
         response = requests.get(OPEN_WEATHER_URL, weather_parameters)
         weather_data = response.json()
+        current_temp = weather_data['current']['temp']
         hourly_data = weather_data['hourly'][:12]
-        print(hourly_data)
-
         rain = False
         for item in hourly_data:
             weather_id = item['weather'][0]['id']
@@ -85,13 +85,13 @@ def location():
         if rain:
             print('Bring an umbrella')
             # TODO- Send SMS with twilio only if registered
-        return redirect('/')
+        return render_template('result.html', current_temp=current_temp, hourly_data=hourly_data, rain=rain)
     return render_template('add.html', form=form)
 
 
 @app.route('/results', methods=["GET", "POST"])
-def results():
-    return render_template('results.html')
+def result():
+    return render_template('result.html')
 
 
 @app.route('/login', methods=["GET", "POST"])
