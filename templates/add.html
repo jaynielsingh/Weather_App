@@ -1,14 +1,13 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% include "base.html" %}
 
 {% block body %}
 <div class="container">
-    <h1>Enter your latitude and longitude: </h1>
+    <div>
+        {{ wtf.quick_form(form) }}
 
-    {{ wtf.quick_form(form) }}
-
-
-    <h2>If you are unsure about your latitude or longitude, <a href="https://www.latlong.net">Click Here</a></h2>
+    </div>
 
 
 </div>

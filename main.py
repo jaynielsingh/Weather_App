@@ -75,17 +75,27 @@ def location():
         }
         response = requests.get(OPEN_WEATHER_URL, weather_parameters)
         weather_data = response.json()
+        # Getting current weather information.
         current_temp = weather_data['current']['temp']
+        current_weather_description = weather_data['current']['weather'][0]['description']
+        current_wind_speed = weather_data['current']['wind_speed']
+
         hourly_data = weather_data['hourly'][:12]
-        rain = False
+
+        print(current_temp)
+        print(hourly_data)
+        will_it_rain = False
         for item in hourly_data:
             weather_id = item['weather'][0]['id']
             if weather_id < 700:
-                rain = True
-        if rain:
+                will_it_rain = True
+        if will_it_rain:
             print('Bring an umbrella')
             # TODO- Send SMS with twilio only if registered
-        return render_template('result.html', current_temp=current_temp, hourly_data=hourly_data, rain=rain)
+        return render_template('result.html', current_temp=current_temp, form=form, hourly_data=hourly_data,
+                               will_it_rain=will_it_rain, current_weather_description=current_weather_description,
+                               current_wind_speed=current_wind_speed,
+                               )
     return render_template('add.html', form=form)
 
 
