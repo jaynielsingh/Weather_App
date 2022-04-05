@@ -62,7 +62,9 @@ def index():
 @app.route('/location', methods=["GET", "POST"])
 def location():
     form = LocationForm()
+
     if form.validate_on_submit():
+
         data = geocoder.osm(form.city.data)
         latitude = data.lat
         longitude = data.lng
@@ -79,11 +81,19 @@ def location():
         current_temp = weather_data['current']['temp']
         current_weather_description = weather_data['current']['weather'][0]['description']
         current_wind_speed = weather_data['current']['wind_speed']
+        current_humidity = weather_data['current']['humidity']
+
+
+        daily_temp = weather_data['daily'][0]['temp']
+        daily_max = daily_temp['max']
+        daily_min = daily_temp['min']
+
 
         hourly_data = weather_data['hourly'][:12]
 
         print(current_temp)
-        print(hourly_data)
+        print(daily_temp)
+        print(daily_min, daily_max)
         will_it_rain = False
         for item in hourly_data:
             weather_id = item['weather'][0]['id']
@@ -94,7 +104,8 @@ def location():
             # TODO- Send SMS with twilio only if registered
         return render_template('result.html', current_temp=current_temp, form=form, hourly_data=hourly_data,
                                will_it_rain=will_it_rain, current_weather_description=current_weather_description,
-                               current_wind_speed=current_wind_speed,
+                               current_wind_speed=current_wind_speed, daily_min=daily_min, daily_max=daily_max,
+                               current_humidity=current_humidity,
                                )
     return render_template('add.html', form=form)
 
