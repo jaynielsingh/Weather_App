@@ -1,22 +1,21 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% include "base.html" %}
-
+<div class="card">
+    <p> current temperature: {{ current_temp }} </p>
+    <p></p>
+</div>
 
 {% block body %}
 <section class="vh-100" style="background-color: #4B515D;">
     <div class="container py-5 h-100">
-
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-8 col-lg-6 col-xl-4">
-
                 <div class="card" style="color: #4B515D; border-radius: 35px;">
                     <div class="card-body p-4">
-
                         <div class="d-flex text-center">
                             <h6 class="flex-grow-1">{{ form.city.data.capitalize() }}</h6>
                         </div>
-
                         <div class="d-flex flex-column text-center mt-5 mb-4">
                             <h6 class="display-4 mb-0 font-weight-bold" style="color: #1C2331;">{{ current_temp
                                 }}°F </h6>
@@ -24,31 +23,45 @@
                                   style="color: #868B94">Low: {{ daily_min }}°F / High: {{ daily_max }}°F</span>
                             <span class="small" style="color: #868B94">{{ current_weather_description }}</span>
                         </div>
-
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1" style="font-size: 2rem;">
                                 <div>
                                     <i class="fas fa-wind fa-fw" style="color: #868B94;"></i>
-                                    <span class="ms-1"> {{ current_wind_speed}} mp/h </span>
+                                    <span class="ms-1">Wind Speed: {{ current_wind_speed}} mp/h </span>
+                                </div>
+                                <div>
+                                    <i class="fas fa-water fa-fw" style="color: #868B94;"></i>
+                                    <span class="ms-1">Humidity: {{ current_humidity }}%</span>
+                                </div>
+                                <div>
+                                    {% if will_it_rain: %}
+                                    <i class="fas fa-rain fa-fw" style="color: #868B94;"></i>
+                                    <h5>It will rain in the next 8hrs. Bring an umbrella</h5>
+                                    {% else %}
+                                    <h5>It will Not rain for the next 8hrs.</h5>
+                                    {% endif %}
                                 </div>
                             </div>
-                            <!--              <div>-->
-                            <!--                {% if will_it_rain: %}-->
-                            <!--                  <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-weather/ilu1.webp" width="100px">-->
-                            <!--                {% else %}-->
-                            <!--                  <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-weather/ilu2.webp" width="100px">-->
-                            <!--                  -->
-                            <!--                {% endif %}-->
-                            <!--              </div>-->
                         </div>
 
                     </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">Email or SMS</h5>
+                                    <p class="card-text">To receive daily alert if it will rain in the next 8hrs, click
+                                        below.  Inorder to receive alerts you must register</p>
+                                    <a href="{{ url_for('register') }}" class="btn btn-primary">Register</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
             </div>
         </div>
-
     </div>
 </section>
+
 
 {% endblock %}

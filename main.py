@@ -82,6 +82,8 @@ def location():
         current_weather_description = weather_data['current']['weather'][0]['description']
         current_wind_speed = weather_data['current']['wind_speed']
         current_humidity = weather_data['current']['humidity']
+        current_uv_index = weather_data['current']['uvi']
+
 
 
         daily_temp = weather_data['daily'][0]['temp']
@@ -94,6 +96,8 @@ def location():
         print(current_temp)
         print(daily_temp)
         print(daily_min, daily_max)
+        print(current_humidity)
+
         will_it_rain = False
         for item in hourly_data:
             weather_id = item['weather'][0]['id']
@@ -105,7 +109,7 @@ def location():
         return render_template('result.html', current_temp=current_temp, form=form, hourly_data=hourly_data,
                                will_it_rain=will_it_rain, current_weather_description=current_weather_description,
                                current_wind_speed=current_wind_speed, daily_min=daily_min, daily_max=daily_max,
-                               current_humidity=current_humidity,
+                               current_humidity=current_humidity, current_uv_index=current_uv_index,
                                )
     return render_template('add.html', form=form)
 

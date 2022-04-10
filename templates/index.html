@@ -3,13 +3,14 @@
 {% include "base.html" %}
 
 {% block body %}
+<section class="colored-section" id="welcome">
 
-<div class="container">
-    <h1>Welcome</h1>
-    <p>To get started, please enter your location.<a href="{{ url_for('location') }}">Click here</a></p>
+    <h1>Weather alerts for the next 8 hours</h1>
+    <button type="button" class="btn btn-lg btn-dark">
+        <a class="text-white" href="{{ url_for('location') }}">Enter Location</button>
+    <button type="button" class="btn btn-lg btn-light"><a href="{{ url_for('register') }}">Get Alerts</button>
 
-    <p>To register <a href="{{ url_for('register') }}">Click Here</a></p>
-    <p>To Login <a href="{{ url_for('login') }}">Click Here</a></p>
-</div>
+
+</section>
 
 {% endblock %}
