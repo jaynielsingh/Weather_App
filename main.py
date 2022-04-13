@@ -85,11 +85,9 @@ def location():
         current_uv_index = weather_data['current']['uvi']
 
 
-
         daily_temp = weather_data['daily'][0]['temp']
         daily_max = daily_temp['max']
         daily_min = daily_temp['min']
-
 
         hourly_data = weather_data['hourly'][:12]
 

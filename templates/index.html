@@ -3,14 +3,148 @@
 {% include "base.html" %}
 
 {% block body %}
-<section class="colored-section" id="welcome">
 
-    <h1>Weather alerts for the next 8 hours</h1>
-    <button type="button" class="btn btn-lg btn-dark">
-        <a class="text-white" href="{{ url_for('location') }}">Enter Location</button>
-    <button type="button" class="btn btn-lg btn-light"><a href="{{ url_for('register') }}">Get Alerts</button>
+<!-- Welcome -->
+<section class="alerts" id="welcome"
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-6">
+        <h1>Weather Pro</h1>
+        <p>An awesome way to stay alert about the weather without checking. Get sms
+        when you wake up about the weather for the next 8 hours.</p>
+        <button type="button" class="btn btn-lg btn-dark btn-outline-info download-button">
+          <a class="text-white" href="{{ url_for('location') }}">Enter Location</button>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- Features -->
+<section id="features">
+  <div class="container-fluid">
+    <div class="row text-center">
+      <a href="#"></a>
+      <div class="feature-box col-lg-4">
+        <i class="icon fas fa-check-double fa-3x"></i>
+        <h3> Easily get weather information</h3>
+        <p class='feature-p'>Get the current weather, windspeed, humidity level and more</p>
+      </div>
+      <div class="feature-box col-lg-4">
+        <i class="icon fas fa-cloud fa-3x"></i>
+        <h3>Weather Alerts</h3>
+        <p class='feature-p'>Get alerts to see if you'll need an umbrella for the next 8 hours of your day</p>
+      </div>
+      <div class="feature-box col-lg-4">
+        <i class="icon fas fa-bell fa-3x"></i>
+        <h3>Guaranteed to keep you ahead of the Weather</h3>
+        <p class='feature-p'>Weather Alert will alert you about the weather first thing in the morning when you pick up your phone</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonial -->
+<section id='testimonials'>
+  <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <h2>I no longer have to check to see if i need an umbrella. Never again will i get caught off guard without an umbrella.</h2>
+            <em>John Smith, New York</em>
+        </div>
+        <div class="carousel-item">
+            <h2 class="testimonial-text">These alerts are great. Get a sms in the morning before i start my day.</h2>"
+            <em>Beverly Jones, Illinois</em>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+            data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+            data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+      <div class="col">
+        <div class="card mb-4 rounded-3 shadow-sm">
+          <div class="card-header py-3">
+            <h4 class="my-0 fw-normal">Free</h4>
+          </div>
+          <div class="card-body">
+            <h1 class="card-title pricing-card-title">$0<small class="text-muted fw-light">/mo</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+              <li>Unlimited Weather Check</li>
+              <li>1 SMS Per Day</li>
+              <li>Email support</li>
+            </ul>
+            <button type="button" class="w-100 btn btn-lg bg-dark btn-outline-info">Sign up for free</button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card mb-4 rounded-3 shadow-sm border-info">
+          <div class="card-header py-3">
+            <h4 class="my-0 fw-normal">Basic</h4>
+          </div>
+          <div class="card-body">
+            <h1 class="card-title pricing-card-title">$15<small class="text-muted fw-light">/mo</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+              <li>Unlimited Weather Check</li>
+              <li>5 SMS Per Day</li>
+              <li>Get Weather Alert With Your SMS</li>
+              <li>Priority email support</li>
+            </ul>
+            <button type="button" class="w-100 btn btn-lg btn-info">Get started</button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card mb-4 rounded-3 shadow-sm border-info">
+          <div class="card-header py-3 text-white bg-info border-primary">
+            <h4 class="my-0 fw-normal">Enterprise</h4>
+          </div>
+          <div class="card-body">
+            <h1 class="card-title pricing-card-title">$29<small class="text-muted fw-light">/mo</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+              <li>Unlimited Weather Check</li>
+              <li>Unlimited SMS Per Day</li>
+              <li>Get Weather Alert With Your SMS</li>
+              <li>Phone and email support</li>
+              <li>Help center access</li>
+            </ul>
+            <button type="button" class="w-100 btn btn-lg btn-info">Contact us</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<section id="cta">
+
+    <h3 class="cta-heading">Get your alerts before you get caught without an umbrella.</h3>
+    <button class="btn btn-lg btn-dark download-button" type="button"><i class="fab fa-apple"></i> Download</button>
+    <button class="btn btn-lg btn-light download-button" type="button"><i class="fab fa-google-play"></i> Download
+    </button>
 
 </section>
+
+
+<!-- Footer -->
+
+<footer id="footer">
+    <i class="footer-icon fab fa-twitter"></i>
+    <i class="footer-icon fab fa-facebook"></i>
+    <i class="footer-icon fab fa-instagram"></i>
+    <i class="footer-icon fas fa-envelope"></i>
+    <p>© Copyright 2022 WeatherPro</p>
+
+</footer>
 
 {% endblock %}
