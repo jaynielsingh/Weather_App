@@ -7,12 +7,15 @@ from wtforms import *
 from wtforms.validators import DataRequired, Email, Length
 import os
 import geocoder
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 Bootstrap(app)
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 OPEN_WEATHER_URL = 'https://api.openweathermap.org/data/2.5/onecall?'
+OPEN_WEATHER_ICON_URL = "http://openweathermap.org/img/wn/"
+ICON_FORMAT = ".png"
 WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -64,7 +67,6 @@ def location():
     form = LocationForm()
 
     if form.validate_on_submit():
-
         data = geocoder.osm(form.city.data)
         latitude = data.lat
         longitude = data.lng
@@ -77,25 +79,93 @@ def location():
         }
         response = requests.get(OPEN_WEATHER_URL, weather_parameters)
         weather_data = response.json()
-        # Getting current weather information.
-        current_temp = weather_data['current']['temp']
+
+        # Current weather information.
+        current_temp = round(weather_data['current']['temp'])
         current_weather_description = weather_data['current']['weather'][0]['description']
+        current_weather_main = weather_data['current']['weather'][0]['main']
+
         current_wind_speed = weather_data['current']['wind_speed']
         current_humidity = weather_data['current']['humidity']
         current_uv_index = weather_data['current']['uvi']
+        current_pressure = weather_data['current']['pressure']
+        current_clouds = weather_data['current']['clouds']
 
-
+        # Daily weather information
         daily_temp = weather_data['daily'][0]['temp']
-        daily_max = daily_temp['max']
-        daily_min = daily_temp['min']
+        daily_max = round(daily_temp['max'])
+        daily_min = round(daily_temp['min'])
 
-        hourly_data = weather_data['hourly'][:12]
+        # Hourly data for 12hrs rain
+        hourly_data = weather_data['hourly'][:8]
 
-        print(current_temp)
-        print(daily_temp)
-        print(daily_min, daily_max)
-        print(current_humidity)
+        # Hourly Temp data
+        six_hour_temp_data = weather_data['hourly'][:6]
+        six_hourly_temp = [round(hour['temp']) for hour in six_hour_temp_data]
 
+        #       Hourly Time
+        current_time = datetime.now().strftime("%H")
+        hour_one = datetime.now() + timedelta(hours=1)
+        hour_two = datetime.now() + timedelta(hours=2)
+        hour_three = datetime.now() + timedelta(hours=3)
+        hour_four = datetime.now() + timedelta(hours=4)
+        hour_five = datetime.now() + timedelta(hours=5)
+        six_hour_time = [current_time, hour_one.strftime("%H"), hour_two.strftime("%H"), hour_three.strftime("%H"),
+                         hour_four.strftime("%H"), hour_five.strftime("%H"), ]
+
+        print(current_time, six_hour_time)
+
+        #       Hourly Icons
+
+        # Current hour
+        current_icon_code = weather_data['hourly'][0]['weather'][0]['icon']
+        current_icon = requests.get(OPEN_WEATHER_ICON_URL + current_icon_code + ICON_FORMAT).url
+
+        # Hour 1
+        hour_two_icon_code = weather_data['hourly'][1]['weather'][0]['icon']
+        hour_two_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_two_icon_code + ICON_FORMAT).url
+
+        # Hour 2
+        hour_three_icon_code = weather_data['hourly'][2]['weather'][0]['icon']
+        hour_three_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_three_icon_code + ICON_FORMAT).url
+
+        # Hour 3
+        hour_four_icon_code = weather_data['hourly'][3]['weather'][0]['icon']
+        hour_four_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_four_icon_code + ICON_FORMAT).url
+
+        # Hour 4
+        hour_five_icon_code = weather_data['hourly'][4]['weather'][0]['icon']
+        hour_five_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_five_icon_code + ICON_FORMAT).url
+
+        # Hour 5
+        hour_six_icon_code = weather_data['hourly'][5]['weather'][0]['icon']
+        hour_six_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_six_icon_code + ICON_FORMAT).url
+
+        six_hour_icon = [current_icon, hour_two_icon, hour_three_icon, hour_four_icon, hour_five_icon, hour_six_icon]
+
+        #       Daily Weather icon and temp
+
+        # Today
+        icon_code_today = weather_data['current']['weather'][0]['icon']
+        today_temp = weather_data['daily'][0]['temp']['day']
+        icon_today = requests.get(OPEN_WEATHER_ICON_URL + icon_code_today + ICON_FORMAT).url
+
+        # Tomorrow
+        icon_code_tomorrow = weather_data['daily'][1]['weather'][0]['icon']
+        tomorrow_temp = weather_data['daily'][1]['temp']['day']
+        icon_tomorrow = requests.get(OPEN_WEATHER_ICON_URL + icon_code_tomorrow + ICON_FORMAT).url
+
+        # Day After Tomorrow
+        icon_code_dat = weather_data['daily'][2]['weather'][0]['icon']
+        dat_temp = weather_data['daily'][2]['temp']['day']
+        icon_dat = requests.get(OPEN_WEATHER_ICON_URL + icon_code_dat + ICON_FORMAT).url
+
+        daily_icon = [icon_today, icon_tomorrow, icon_dat]
+        daily_temp = [round(today_temp), round(tomorrow_temp), round(dat_temp)]
+
+        print(today_temp, tomorrow_temp, dat_temp, current_weather_main)
+
+        # checking if rain
         will_it_rain = False
         for item in hourly_data:
             weather_id = item['weather'][0]['id']
@@ -104,10 +174,15 @@ def location():
         if will_it_rain:
             print('Bring an umbrella')
             # TODO- Send SMS with twilio only if registered
+
         return render_template('result.html', current_temp=current_temp, form=form, hourly_data=hourly_data,
-                               will_it_rain=will_it_rain, current_weather_description=current_weather_description,
+                               will_it_rain=will_it_rain, current_weather_main=current_weather_main,
+                               current_weather_description=current_weather_description,
                                current_wind_speed=current_wind_speed, daily_min=daily_min, daily_max=daily_max,
                                current_humidity=current_humidity, current_uv_index=current_uv_index,
+                               current_pressure=current_pressure, current_clouds=current_clouds,
+                               six_hourly_temp=six_hourly_temp, six_hour_time=six_hour_time,
+                               six_hour_icon=six_hour_icon, daily_icon=daily_icon, daily_temp=daily_temp,
                                )
     return render_template('add.html', form=form)
 
