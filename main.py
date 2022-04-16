@@ -165,7 +165,7 @@ def location():
 
         print(today_temp, tomorrow_temp, dat_temp, current_weather_main)
 
-        # checking if rain
+        # checking if rain is true
         will_it_rain = False
         for item in hourly_data:
             weather_id = item['weather'][0]['id']
