@@ -10,7 +10,10 @@
 
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-9 col-lg-7 col-xl-5">
-                {% if current_weather_main == "Rain" %}
+                {% if is_it_night == True %}
+                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                     style="background-image: url('static/images/night.gif')">
+                {% elif current_weather_main == "Rain" %}
                     <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
                      style="background-image: url('static/images/rain.gif')">
                 {% elif current_weather_main == "Clear" %}
@@ -28,8 +31,10 @@
                 {% elif current_weather_main == "Fog" %}
                     <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
                          style="background-image: url('static/images/fog.gif')">
+                {% elif current_weather_main == "Mist" %}
+                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                         style="background-image: url('static/images/mist.gif')">
                 {% endif %}
-
 
                         <!-- Main current data -->
                         <div class="card-header p-4 border-0">
@@ -147,3 +152,4 @@
 
 
 {% endblock %}
+

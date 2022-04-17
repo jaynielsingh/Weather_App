@@ -7,8 +7,8 @@ from wtforms import *
 from wtforms.validators import DataRequired, Email, Length
 import os
 import geocoder
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, time
+import pytz
 app = Flask(__name__)
 Bootstrap(app)
 SECRET_KEY = os.urandom(32)
@@ -79,6 +79,7 @@ def location():
         }
         response = requests.get(OPEN_WEATHER_URL, weather_parameters)
         weather_data = response.json()
+        print(weather_data)
 
         # Current weather information.
         current_temp = round(weather_data['current']['temp'])
@@ -114,6 +115,13 @@ def location():
                          hour_four.strftime("%H"), hour_five.strftime("%H"), ]
 
         print(current_time, six_hour_time)
+        # checking if its night
+        now = datetime.now()
+        now_time = now.time()
+        is_it_night = False
+
+        if time(8, 00) <= now_time >= time(18, 00):
+            is_it_night = True
 
         #       Hourly Icons
 
@@ -183,6 +191,7 @@ def location():
                                current_pressure=current_pressure, current_clouds=current_clouds,
                                six_hourly_temp=six_hourly_temp, six_hour_time=six_hour_time,
                                six_hour_icon=six_hour_icon, daily_icon=daily_icon, daily_temp=daily_temp,
+                               is_it_night=is_it_night,
                                )
     return render_template('add.html', form=form)
 
