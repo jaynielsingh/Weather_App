@@ -10,9 +10,9 @@
 
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-9 col-lg-7 col-xl-5">
-                {% if is_it_night == True %}
+                {% if "n.png" in six_hour_icon[0] %}
                     <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                     style="background-image: url('static/images/night.gif')">
+                     style="background-image: url('static/images/night_1.gif')">
                 {% elif current_weather_main == "Rain" %}
                     <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
                      style="background-image: url('static/images/rain.gif')">

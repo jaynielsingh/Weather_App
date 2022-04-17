@@ -9,6 +9,7 @@ import os
 import geocoder
 from datetime import datetime, timedelta, time
 import pytz
+
 app = Flask(__name__)
 Bootstrap(app)
 SECRET_KEY = os.urandom(32)
@@ -85,12 +86,13 @@ def location():
         current_temp = round(weather_data['current']['temp'])
         current_weather_description = weather_data['current']['weather'][0]['description']
         current_weather_main = weather_data['current']['weather'][0]['main']
-
         current_wind_speed = weather_data['current']['wind_speed']
         current_humidity = weather_data['current']['humidity']
         current_uv_index = weather_data['current']['uvi']
         current_pressure = weather_data['current']['pressure']
         current_clouds = weather_data['current']['clouds']
+        current_user_dt = weather_data['current']['dt']
+        current_tz = weather_data['timezone']
 
         # Daily weather information
         daily_temp = weather_data['daily'][0]['temp']
@@ -104,48 +106,53 @@ def location():
         six_hour_temp_data = weather_data['hourly'][:6]
         six_hourly_temp = [round(hour['temp']) for hour in six_hour_temp_data]
 
+        #   Setting up user local time
+
+        utc_tz = pytz.utc
+        utc_dt = utc_tz.localize(datetime.utcfromtimestamp(current_user_dt))
+        # utc_dt = utc_dt.strftime('%H:%M')
+        print(utc_dt)
+        user_time = pytz.timezone(current_tz)
+        local_time = utc_dt.astimezone(user_time)
+        print(local_time)
+        local_time_hour = local_time
+
         #       Hourly Time
-        current_time = datetime.now().strftime("%H")
-        hour_one = datetime.now() + timedelta(hours=1)
-        hour_two = datetime.now() + timedelta(hours=2)
-        hour_three = datetime.now() + timedelta(hours=3)
-        hour_four = datetime.now() + timedelta(hours=4)
-        hour_five = datetime.now() + timedelta(hours=5)
-        six_hour_time = [current_time, hour_one.strftime("%H"), hour_two.strftime("%H"), hour_three.strftime("%H"),
+        current_time = local_time_hour
+        hour_one = current_time + timedelta(hours=1)
+        hour_two = current_time + timedelta(hours=2)
+        hour_three = current_time + timedelta(hours=3)
+        hour_four = current_time + timedelta(hours=4)
+        hour_five = current_time + timedelta(hours=5)
+        six_hour_time = [current_time.strftime("%H"), hour_one.strftime("%H"), hour_two.strftime("%H"),
+                         hour_three.strftime("%H"),
                          hour_four.strftime("%H"), hour_five.strftime("%H"), ]
 
         print(current_time, six_hour_time)
-        # checking if its night
-        now = datetime.now()
-        now_time = now.time()
-        is_it_night = False
 
-        if time(8, 00) <= now_time >= time(18, 00):
-            is_it_night = True
+        #          Hourly Icons
 
-        #       Hourly Icons
-
-        # Current hour
+        #   Current hour
         current_icon_code = weather_data['hourly'][0]['weather'][0]['icon']
         current_icon = requests.get(OPEN_WEATHER_ICON_URL + current_icon_code + ICON_FORMAT).url
 
-        # Hour 1
+        #   Hour 1
         hour_two_icon_code = weather_data['hourly'][1]['weather'][0]['icon']
         hour_two_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_two_icon_code + ICON_FORMAT).url
 
-        # Hour 2
+        #   Hour 2
         hour_three_icon_code = weather_data['hourly'][2]['weather'][0]['icon']
         hour_three_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_three_icon_code + ICON_FORMAT).url
 
-        # Hour 3
+        #   Hour 3
         hour_four_icon_code = weather_data['hourly'][3]['weather'][0]['icon']
         hour_four_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_four_icon_code + ICON_FORMAT).url
 
-        # Hour 4
+        #   Hour 4
         hour_five_icon_code = weather_data['hourly'][4]['weather'][0]['icon']
         hour_five_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_five_icon_code + ICON_FORMAT).url
 
-        # Hour 5
+        #   Hour 5
         hour_six_icon_code = weather_data['hourly'][5]['weather'][0]['icon']
         hour_six_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_six_icon_code + ICON_FORMAT).url
 
@@ -191,7 +198,7 @@ def location():
                                current_pressure=current_pressure, current_clouds=current_clouds,
                                six_hourly_temp=six_hourly_temp, six_hour_time=six_hour_time,
                                six_hour_icon=six_hour_icon, daily_icon=daily_icon, daily_temp=daily_temp,
-                               is_it_night=is_it_night,
+
                                )
     return render_template('add.html', form=form)
 
