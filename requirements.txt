@@ -4,3 +4,4 @@ flask_wtf==1.0.0
 geocoder==1.38.1
 requests==2.27.1
 WTForms==3.0.1
+pytz~=2022.1

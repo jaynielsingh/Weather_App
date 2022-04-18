@@ -5,151 +5,176 @@
 
 {% block body %}
 
-<section class="vh-100">
+<section id="results" class="vh-100">
     <div class="container py-5">
-
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-9 col-lg-7 col-xl-5">
                 {% if "n.png" in six_hour_icon[0] %}
-                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
                      style="background-image: url('static/images/night_1.gif')">
-                {% elif current_weather_main == "Rain" %}
+                    {% elif current_weather_main == "Rain" %}
                     <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                     style="background-image: url('static/images/rain.gif')">
-                {% elif current_weather_main == "Clear" %}
-                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                         style="background-image: url('static/images/clear.gif')">
-                {% elif current_weather_main == "Clouds" %}
-                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                         style="background-image: url('static/images/clouds.gif')">
-                {% elif current_weather_main == "Snow" %}
-                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                         style="background-image: url('static/images/snow.gif')">
-                {% elif current_weather_main == "Thunderstorm" %}
-                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                         style="background-image: url('static/images/thunderstorm.gif')">
-                {% elif current_weather_main == "Fog" %}
-                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                         style="background-image: url('static/images/fog.gif')">
-                {% elif current_weather_main == "Mist" %}
-                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
-                         style="background-image: url('static/images/mist.gif')">
-                {% endif %}
+                         style="background-image: url('static/images/rain.gif')">
+                        {% elif current_weather_main == "Clear" %}
+                        <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                             style="background-image: url('static/images/clear.gif')">
+                            {% elif current_weather_main == "Clouds" %}
+                            <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                                 style="background-image: url('static/images/clouds.gif')">
+                                {% elif current_weather_main == "Snow" %}
+                                <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                                     style="background-image: url('static/images/snow.gif')">
+                                    {% elif current_weather_main == "Thunderstorm" %}
+                                    <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                                         style="background-image: url('static/images/thunderstorm.gif')">
+                                        {% elif current_weather_main == "Fog" %}
+                                        <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                                             style="background-image: url('static/images/fog.gif')">
+                                            {% elif current_weather_main == "Mist" %}
+                                            <div id="wrapper-bg" class="card bg-image text-white  shadow-4-strong"
+                                                 style="background-image: url('static/images/mist.gif')">
+                                                {% endif %}
 
-                        <!-- Main current data -->
-                        <div class="card-header p-4 border-0">
-                            <div class="text-center mb-3">
-                                <p class="h2 mb-1" id="wrapper-name">{{ form.city.data.capitalize() }}</p>
-                                <p class="mb-1" id="wrapper-description">{{ current_weather_description }}</p>
-                                <p class="display-1 mb-1" id="wrapper-temp">{{ current_temp }}°F</p>
-                                <span class="">Pressure: <span
-                                        id="wrapper-pressure">{{ current_pressure }} hPa</span></span>
-                                <span class="mx-2">|</span>
-                                <span class="">Humidity: <span
-                                        id="wrapper-humidity">{{ current_humidity }}%</span></span>
-                                <span class="mx-2">|</span>
-                                <span class="">Cloudiness: {{ current_clouds }}%</span>
-                                <span class="mx-2">|</span>
-                                <span class="">High:{{ daily_max }}°F | Low:{{ daily_min }}°F</span>
-                                <div class>
+                                                <!-- Main current data -->
+                                                <div class="card-header p-4 border-0">
+                                                    <div class="text-center mb-3">
+                                                        <p class="h2 mb-1" id="wrapper-name">{{
+                                                            form.city.data.capitalize() }}</p>
+                                                        <p class="mb-1" id="wrapper-description">{{
+                                                            current_weather_description }}</p>
+                                                        <p class="display-1 mb-1" id="wrapper-temp">{{ current_temp
+                                                            }}°F</p>
+                                                        <span class="">Pressure: <span
+                                                                id="wrapper-pressure">{{ current_pressure }} hPa</span></span>
+                                                        <span class="mx-2">|</span>
+                                                        <span class="">Humidity: <span
+                                                                id="wrapper-humidity">{{ current_humidity }}%</span></span>
+                                                        <span class="mx-2">|</span>
+                                                        <span class="">Cloudiness: {{ current_clouds }}%</span>
+                                                        <span class="mx-2">|</span>
+                                                        <span class="">High:{{ daily_max }}°F | Low:{{ daily_min }}°F</span>
+                                                        <div class>
 
-                                </div>
-                            </div>
-                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                        <!-- Hourly forecast -->
-                        <div class="card-body p-4 border-top border-bottom mb-2">
-                            <div class="row text-center">
-                                <div class="col-2">
-                                    <strong class="d-block mb-2">{{ six_hour_time[0] }}</strong>
-                                    <img src="{{ six_hour_icon[0] }}" alt="">
-                                    <strong class="d-block" id="wrapper-hour-now">{{ six_hourly_temp[0] }}°F</strong>
-                                </div>
+                                                <!-- Hourly forecast -->
+                                                <div class="card-body p-4 border-top border-bottom mb-2">
+                                                    <div class="row text-center">
+                                                        <div class="col-2">
+                                                            <strong class="d-block mb-2">{{ six_hour_time[0] }}</strong>
+                                                            <img src="{{ six_hour_icon[0] }}" alt="">
+                                                            <strong class="d-block" id="wrapper-hour-now">{{
+                                                                six_hourly_temp[0] }}°F</strong>
+                                                        </div>
 
-                                <div class="col-2">
-                                    <strong class="d-block mb-2" id="wrapper-time1">{{ six_hour_time[1] }}</strong>
-                                    <img src="{{ six_hour_icon[1] }}" alt="">
-                                    <strong class="d-block" id="wrapper-hour1">{{ six_hourly_temp[1] }}°F</strong>
-                                </div>
+                                                        <div class="col-2">
+                                                            <strong class="d-block mb-2" id="wrapper-time1">{{
+                                                                six_hour_time[1] }}</strong>
+                                                            <img src="{{ six_hour_icon[1] }}" alt="">
+                                                            <strong class="d-block" id="wrapper-hour1">{{
+                                                                six_hourly_temp[1] }}°F</strong>
+                                                        </div>
 
-                                <div class="col-2">
-                                    <strong class="d-block mb-2" id="wrapper-time2">{{ six_hour_time[2] }}</strong>
-                                    <img id="wrapper-icon-hour2" src="{{ six_hour_icon[2] }}" class="" alt=""/>
-                                    <strong class="d-block" id="wrapper-hour2">{{ six_hourly_temp[2] }}°F</strong>
-                                </div>
+                                                        <div class="col-2">
+                                                            <strong class="d-block mb-2" id="wrapper-time2">{{
+                                                                six_hour_time[2] }}</strong>
+                                                            <img id="wrapper-icon-hour2" src="{{ six_hour_icon[2] }}"
+                                                                 class="" alt=""/>
+                                                            <strong class="d-block" id="wrapper-hour2">{{
+                                                                six_hourly_temp[2] }}°F</strong>
+                                                        </div>
 
-                                <div class="col-2">
-                                    <strong class="d-block mb-2" id="wrapper-time3">{{ six_hour_time[3] }}</strong>
-                                    <img id="wrapper-icon-hour3" src="{{ six_hour_icon[3] }}" class="" alt=""/>
-                                    <strong class="d-block" id="wrapper-hour3">{{ six_hourly_temp[3] }}°F</strong>
-                                </div>
+                                                        <div class="col-2">
+                                                            <strong class="d-block mb-2" id="wrapper-time3">{{
+                                                                six_hour_time[3] }}</strong>
+                                                            <img id="wrapper-icon-hour3" src="{{ six_hour_icon[3] }}"
+                                                                 class="" alt=""/>
+                                                            <strong class="d-block" id="wrapper-hour3">{{
+                                                                six_hourly_temp[3] }}°F</strong>
+                                                        </div>
 
-                                <div class="col-2">
-                                    <strong class="d-block mb-2" id="wrapper-time4">{{ six_hour_time[4] }}</strong>
-                                    <img id="wrapper-icon-hour4" src="{{ six_hour_icon[4] }}" class="" alt=""/>
-                                    <strong class="d-block" id="wrapper-hour4">{{ six_hourly_temp[4] }}°F</strong>
-                                </div>
+                                                        <div class="col-2">
+                                                            <strong class="d-block mb-2" id="wrapper-time4">{{
+                                                                six_hour_time[4] }}</strong>
+                                                            <img id="wrapper-icon-hour4" src="{{ six_hour_icon[4] }}"
+                                                                 class="" alt=""/>
+                                                            <strong class="d-block" id="wrapper-hour4">{{
+                                                                six_hourly_temp[4] }}°F</strong>
+                                                        </div>
 
-                                <div class="col-2">
-                                    <strong class="d-block mb-2" id="wrapper-time5">{{ six_hour_time[5] }}</strong>
-                                    <img id="wrapper-icon-hour5" src="{{ six_hour_icon[5] }}" class="" alt=""/>
-                                    <strong class="d-block" id="wrapper-hour5">{{ six_hourly_temp[5] }}°F</strong>
-                                </div>
-                            </div>
-                        </div>
+                                                        <div class="col-2">
+                                                            <strong class="d-block mb-2" id="wrapper-time5">{{
+                                                                six_hour_time[5] }}</strong>
+                                                            <img id="wrapper-icon-hour5" src="{{ six_hour_icon[5] }}"
+                                                                 class="" alt=""/>
+                                                            <strong class="d-block" id="wrapper-hour5">{{
+                                                                six_hourly_temp[5] }}°F</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                        <!-- Daily forecast -->
-                        <div class="card-body px-5">
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <strong>Today</strong>
-                                </div>
+                                                <!-- Daily forecast -->
+                                                <div class="card-body px-5">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-lg-6">
+                                                            <strong>Today</strong>
+                                                        </div>
 
-                                <div class="col-lg-2 text-center">
-                                    <img id="wrapper-icon-today" src="{{ daily_icon[0] }}" class="w-100" alt=""/>
-                                </div>
+                                                        <div class="col-lg-2 text-center">
+                                                            <img id="wrapper-icon-today" src="{{ daily_icon[0] }}"
+                                                                 class="w-100" alt=""/>
+                                                        </div>
 
-                                <div class="col-lg-4 text-end">
-                                    <span id="wrapper-forecast-temp-today">{{ daily_temp[0] }}°F</span>
-                                </div>
-                            </div>
+                                                        <div class="col-lg-4 text-end">
+                                                            <span id="wrapper-forecast-temp-today">{{ daily_temp[0] }}°F</span>
+                                                        </div>
+                                                    </div>
 
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <strong>Tomorrow</strong>
-                                </div>
+                                                    <div class="row align-items-center">
+                                                        <div class="col-lg-6">
+                                                            <strong>Tomorrow</strong>
+                                                        </div>
 
-                                <div class="col-lg-2 text-center">
-                                    <img id="wrapper-icon-tomorrow" src="{{ daily_icon[1] }}" class="w-100" alt=""/>
-                                </div>
+                                                        <div class="col-lg-2 text-center">
+                                                            <img id="wrapper-icon-tomorrow" src="{{ daily_icon[1] }}"
+                                                                 class="w-100" alt=""/>
+                                                        </div>
 
-                                <div class="col-lg-4 text-end">
-                                    <span id="wrapper-forecast-temp-tomorrow">{{ daily_temp[1] }}°F</span>
-                                </div>
-                            </div>
+                                                        <div class="col-lg-4 text-end">
+                                                            <span id="wrapper-forecast-temp-tomorrow">{{ daily_temp[1] }}°F</span>
+                                                        </div>
+                                                    </div>
 
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <strong>Day after tomorrow</strong>
-                                </div>
+                                                    <div class="row align-items-center">
+                                                        <div class="col-lg-6">
+                                                            <strong>Day after tomorrow</strong>
+                                                        </div>
 
-                                <div class="col-lg-2 text-center">
-                                    <img id="wrapper-icon-dAT" src="{{ daily_icon[2] }}" class="w-100" alt=""/>
-                                </div>
+                                                        <div class="col-lg-2 text-center">
+                                                            <img id="wrapper-icon-dAT" src="{{ daily_icon[2] }}"
+                                                                 class="w-100" alt=""/>
+                                                        </div>
 
-                                <div class="col-lg-4 text-end">
-                                    <span id="wrapper-forecast-temp-dAT">{{ daily_temp[2] }}°F</span>
+                                                        <div class="col-lg-4 text-end">
+                                                            <span id="wrapper-forecast-temp-dAT">{{ daily_temp[2] }}°F</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </div>
+    </div>
 </section>
 
-
+{% include "footer.html" %}
 {% endblock %}
 

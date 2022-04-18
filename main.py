@@ -7,8 +7,9 @@ from wtforms import *
 from wtforms.validators import DataRequired, Email, Length
 import os
 import geocoder
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 import pytz
+from twilio.rest import Client
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -18,6 +19,8 @@ OPEN_WEATHER_URL = 'https://api.openweathermap.org/data/2.5/onecall?'
 OPEN_WEATHER_ICON_URL = "http://openweathermap.org/img/wn/"
 ICON_FORMAT = ".png"
 WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY')
+TWILIO_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app=app)
@@ -27,7 +30,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    phone_number = db.Column(db.Integer, unique=True, nullable=False)
+    phone_number = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
 
     def __repr__(self):
@@ -36,8 +39,6 @@ class User(db.Model):
 
 # db.create_all()
 
-
-# TODO- Make user login database, hash the password
 
 class RegisterForm(FlaskForm):
     email = EmailField(label='Email', validators=[DataRequired()])
@@ -80,7 +81,6 @@ def location():
         }
         response = requests.get(OPEN_WEATHER_URL, weather_parameters)
         weather_data = response.json()
-        print(weather_data)
 
         # Current weather information.
         current_temp = round(weather_data['current']['temp'])
@@ -99,7 +99,7 @@ def location():
         daily_max = round(daily_temp['max'])
         daily_min = round(daily_temp['min'])
 
-        # Hourly data for 12hrs rain
+        # Hourly data for 8hrs rain
         hourly_data = weather_data['hourly'][:8]
 
         # Hourly Temp data
@@ -110,7 +110,6 @@ def location():
 
         utc_tz = pytz.utc
         utc_dt = utc_tz.localize(datetime.utcfromtimestamp(current_user_dt))
-        # utc_dt = utc_dt.strftime('%H:%M')
         print(utc_dt)
         user_time = pytz.timezone(current_tz)
         local_time = utc_dt.astimezone(user_time)
@@ -128,34 +127,20 @@ def location():
                          hour_three.strftime("%H"),
                          hour_four.strftime("%H"), hour_five.strftime("%H"), ]
 
-        print(current_time, six_hour_time)
-
         #          Hourly Icons
 
-        #   Current hour
         current_icon_code = weather_data['hourly'][0]['weather'][0]['icon']
         current_icon = requests.get(OPEN_WEATHER_ICON_URL + current_icon_code + ICON_FORMAT).url
-
-        #   Hour 1
         hour_two_icon_code = weather_data['hourly'][1]['weather'][0]['icon']
         hour_two_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_two_icon_code + ICON_FORMAT).url
-
-        #   Hour 2
         hour_three_icon_code = weather_data['hourly'][2]['weather'][0]['icon']
         hour_three_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_three_icon_code + ICON_FORMAT).url
-
-        #   Hour 3
         hour_four_icon_code = weather_data['hourly'][3]['weather'][0]['icon']
         hour_four_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_four_icon_code + ICON_FORMAT).url
-
-        #   Hour 4
         hour_five_icon_code = weather_data['hourly'][4]['weather'][0]['icon']
         hour_five_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_five_icon_code + ICON_FORMAT).url
-
-        #   Hour 5
         hour_six_icon_code = weather_data['hourly'][5]['weather'][0]['icon']
         hour_six_icon = requests.get(OPEN_WEATHER_ICON_URL + hour_six_icon_code + ICON_FORMAT).url
-
         six_hour_icon = [current_icon, hour_two_icon, hour_three_icon, hour_four_icon, hour_five_icon, hour_six_icon]
 
         #       Daily Weather icon and temp
@@ -180,7 +165,7 @@ def location():
 
         print(today_temp, tomorrow_temp, dat_temp, current_weather_main)
 
-        # checking if rain is true
+        # Check if rain is true
         will_it_rain = False
         for item in hourly_data:
             weather_id = item['weather'][0]['id']
@@ -188,7 +173,24 @@ def location():
                 will_it_rain = True
         if will_it_rain:
             print('Bring an umbrella')
-            # TODO- Send SMS with twilio only if registered
+            client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
+            message = client.messages.create(
+                body=f"Current Temp: {current_temp}°F | High: {daily_max}°F | Low: {daily_min}°F | Humidity: {current_humidity}% "
+                     f"It will rain in the next 8 hours, bring an ☂️ ",
+                from_='+12074925019',
+                to='+15104158251'
+            )
+            print(message.sid)
+        else:
+            client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
+            message = client.messages.create(
+                body=f"\nCurrent Temp:{current_temp} | High:{daily_max}°F | Low:{daily_min}°F. "
+                     f"No rain in the next 8 hours.  ",
+                from_='+12074925019',
+                to='+15104158251'
+            )
+            print(message.sid)
+        # TODO- Send SMS with twilio only if registered
 
         return render_template('result.html', current_temp=current_temp, form=form, hourly_data=hourly_data,
                                will_it_rain=will_it_rain, current_weather_main=current_weather_main,
@@ -234,5 +236,3 @@ def register():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-# TODO- Show weather data on web application.

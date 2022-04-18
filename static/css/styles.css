@@ -2,9 +2,13 @@
   background-color: #66cdaa;
   color: white;
   padding: 7% 15% 3%;
-
-
 }
+
+#results {
+    padding-top: 200px;
+}
+
+
 
 h1 {
   font-family: 'Montserrat-Black';

@@ -175,20 +175,13 @@
 <section id="cta">
 
     <h3 class="cta-heading">Get your alerts before you get caught without an umbrella.</h3>
-    <button class="btn btn-lg btn-dark download-button text-white" type="button"><a href="{{url_for('register') }}">Download</button>
+    <button class="btn btn-lg btn-dark download-button text-white" type="button">
+        <a href="{{url_for('register') }}">Download
+    </button>
 
 </section>
 
 
-<!-- Footer -->
 
-<footer id="footer">
-    <i class="footer-icon fab fa-twitter"></i>
-    <i class="footer-icon fab fa-facebook"></i>
-    <i class="footer-icon fab fa-instagram"></i>
-    <i class="footer-icon fas fa-envelope"></i>
-    <p>© Copyright 2022 WeatherPro</p>
-
-</footer>
-
+{% include "footer.html" %}
 {% endblock %}
