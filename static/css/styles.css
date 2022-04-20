@@ -5,9 +5,13 @@
 }
 
 #results {
-    padding-top: 200px;
+    background-color: #66cdaa;
+    padding: 7% 15% 3&;
 }
 
+.wave-padding {
+    padding-top: 300px;
+}
 
 
 h1 {
@@ -53,7 +57,7 @@ h3 {
 
 .navbar-brand {
   font-family: "Ubuntu";
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: bold;
 }
 
@@ -156,7 +160,16 @@ h3 {
 @media (max-width: 990px) {
 
     #title {
-    text-align: center;
+        text-align: center;
     }
 
+
+
+}
+
+@media (max-width: 600px) {
+    #results {
+        width: 50%;
+        height: 50%;
+    }
 }

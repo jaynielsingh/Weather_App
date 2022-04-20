@@ -11,7 +11,7 @@ Login
 <section id="welcome" draggable="false" class="vh-100 justify-content-center overflow-hidden pt-0" data-v-271253ee="">
     <section class="mb-10 position-relative">
         <!-- Animated SVG -->
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="position-absolute"
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class=" vh-100 position-absolute"
              style=" margin: auto; display: block; width: 100%; z-index: 0; position: relative; " height="680"
              preserveAspectRatio="none" viewBox="0 0 1920 880">
             <g transform="translate(960,440) scale(1,1) translate(-960,-440)">
@@ -53,10 +53,17 @@ Login
         </svg>
         <!-- Animated SVG -->
         <!-- Features -->
-        <div class="container-fluid justify-content-center">
+        <div class="container-fluid ">
             <div class="d-flex justify-content-center text-center mx-3 my-6">
-                <div class="col-lg-6">
+                <div class="col-lg-6 wave-padding">
                     <h1>Login</h1>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
                     {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
 
                 </div>

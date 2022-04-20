@@ -1,10 +1,12 @@
 import requests
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, flash, abort, url_for, request
 from flask_wtf import FlaskForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user, login_required
 from wtforms import *
 from wtforms.validators import DataRequired, Email, Length
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import geocoder
 from datetime import datetime, timedelta
@@ -19,17 +21,21 @@ OPEN_WEATHER_URL = 'https://api.openweathermap.org/data/2.5/onecall?'
 OPEN_WEATHER_ICON_URL = "http://openweathermap.org/img/wn/"
 ICON_FORMAT = ".png"
 WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY')
-TWILIO_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+TWILIO_SID = os.environ.get('TWILIO_SID')
 TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app=app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-class User(db.Model):
+
+#   Database
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
     email = db.Column(db.String(80), unique=True, nullable=False)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     phone_number = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
 
@@ -40,9 +46,10 @@ class User(db.Model):
 # db.create_all()
 
 
+#   Forms
 class RegisterForm(FlaskForm):
     email = EmailField(label='Email', validators=[DataRequired()])
-    username = StringField(label='Username', validators=[DataRequired()])
+    name = StringField(label="Name", validators=[DataRequired()])
     phone_number = StringField(label="Phone Number", validators=[DataRequired()])
     password = PasswordField(label="Password", validators=[DataRequired()])
     submit = SubmitField(label="Register")
@@ -59,12 +66,18 @@ class LocationForm(FlaskForm):
     submit = SubmitField(label="Enter")
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', logged_in=current_user.is_authenticated)
 
 
 @app.route('/location', methods=["GET", "POST"])
+@login_required
 def location():
     form = LocationForm()
 
@@ -113,6 +126,8 @@ def location():
         print(utc_dt)
         user_time = pytz.timezone(current_tz)
         local_time = utc_dt.astimezone(user_time)
+        formatted_local_time = local_time.strftime("%H:" "%M")
+
         print(local_time)
         local_time_hour = local_time
 
@@ -124,8 +139,7 @@ def location():
         hour_four = current_time + timedelta(hours=4)
         hour_five = current_time + timedelta(hours=5)
         six_hour_time = [current_time.strftime("%H"), hour_one.strftime("%H"), hour_two.strftime("%H"),
-                         hour_three.strftime("%H"),
-                         hour_four.strftime("%H"), hour_five.strftime("%H"), ]
+                         hour_three.strftime("%H"), hour_four.strftime("%H"), hour_five.strftime("%H"), ]
 
         #          Hourly Icons
 
@@ -175,7 +189,7 @@ def location():
             print('Bring an umbrella')
             client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
             message = client.messages.create(
-                body=f"Current Temp: {current_temp}°F | High: {daily_max}°F | Low: {daily_min}°F | Humidity: {current_humidity}% "
+                body=f"\nCurrent Temp: {current_temp}°F | High: {daily_max}°F | Low: {daily_min}°F | Humidity: {current_humidity}% "
                      f"It will rain in the next 8 hours, bring an ☂️ ",
                 from_='+12074925019',
                 to='+15104158251'
@@ -184,13 +198,12 @@ def location():
         else:
             client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
             message = client.messages.create(
-                body=f"\nCurrent Temp:{current_temp} | High:{daily_max}°F | Low:{daily_min}°F. "
+                body=f"\nCurrent Temp: {current_temp}°F | High: {daily_max}°F | Low: {daily_min}°F | Humidity: {current_humidity}% "
                      f"No rain in the next 8 hours.  ",
                 from_='+12074925019',
                 to='+15104158251'
             )
             print(message.sid)
-        # TODO- Send SMS with twilio only if registered
 
         return render_template('result.html', current_temp=current_temp, form=form, hourly_data=hourly_data,
                                will_it_rain=will_it_rain, current_weather_main=current_weather_main,
@@ -200,39 +213,66 @@ def location():
                                current_pressure=current_pressure, current_clouds=current_clouds,
                                six_hourly_temp=six_hourly_temp, six_hour_time=six_hour_time,
                                six_hour_icon=six_hour_icon, daily_icon=daily_icon, daily_temp=daily_temp,
+                               formatted_local_time=formatted_local_time, logged_in=current_user.is_authenticated,
 
                                )
     return render_template('add.html', form=form)
 
 
 @app.route('/results', methods=["GET", "POST"])
+@login_required
 def result():
-    return render_template('result.html')
-
-
-@app.route('/login', methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        pass
-    return render_template('login.html', form=form)
+    return render_template('result.html', logged_in=current_user.is_authenticated)
 
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
+            flash('Email already exists, Try to Login')
+            return redirect(url_for('login'))
+        hashed_password = generate_password_hash(
+            form.password.data,
+            "pbkdf2:sha256",
+            16,
+        )
         new_user = User(
             email=form.email.data,
-            username=form.username.data,
+            name=form.name.data,
             phone_number=form.phone_number.data,
-            password=form.password.data
+            password=hashed_password,
         )
         db.session.add(new_user)
         db.session.commit()
-        return redirect('/')
-    return render_template('register.html', form=form)
+        login_user(new_user)
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form, logged_in=current_user.is_authenticated)
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    email = form.email.data
+    password = form.password.data
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=email).first()
+        if user:
+            if check_password_hash(user.password, password):
+                login_user(user)
+                flash("Logged in successfully")
+                return redirect(url_for('index'))
+            else:
+                flash("Error: Incorrect password, Try Again")
+                return redirect(url_for('login'))
+        else:
+            flash("Error: Incorrect Email, Try Again or Register")
+            return redirect(url_for('login'))
+    return render_template("login.html", logged_in=current_user.is_authenticated, form=form)
+
+
+@app.route('/logout', methods=["GET", "POST"])
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
